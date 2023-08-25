@@ -1,12 +1,11 @@
 FROM golang:1.19-alpine as build
 RUN apk add --no-cache make
 
-WORKDIR $GOPATH/cps-go-api
+WORKDIR $GOPATH/sample-go-api
 COPY . .
 
-RUN mkdir -p build build/static
+RUN mkdir -p build
 RUN go build -mod=mod -v -o ./build ./...
-RUN cp ./docs/swagger.yaml ./build/static/swagger.yaml
 
 FROM alpine:latest
 
@@ -17,7 +16,7 @@ RUN apk add --upgrade --no-cache coreutils
 
 WORKDIR /
 
-COPY --from=build /go/cps-go-api/build /usr/local/bin
+COPY --from=build /go/sample-go-api/build /usr/local/bin
 
 ARG PORT=3000
 ENV SV_PORT=${PORT}
